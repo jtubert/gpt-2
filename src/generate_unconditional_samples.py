@@ -47,6 +47,14 @@ def sample_model(
         length = hparams.n_ctx
     elif length > hparams.n_ctx:
         raise ValueError("Can't get samples longer than window size: %s" % hparams.n_ctx)
+        
+    if batch_size is None:
+        batch_size = 1
+    assert nsamples % batch_size == 0
+    
+    if prefix:
+        context = tf.placeholder(tf.int32, [batch_size, None])
+
 
     with tf.Session(graph=tf.Graph()) as sess:
         np.random.seed(seed)
@@ -55,6 +63,7 @@ def sample_model(
         output = sample.sample_sequence(
             hparams=hparams, length=length,
             start_token=enc.encoder['<|endoftext|>'] if not prefix else None,
+            context=context if prefix else None,
             batch_size=batch_size,
             temperature=temperature, top_k=top_k
         )[:, 1:]
