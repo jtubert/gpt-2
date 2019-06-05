@@ -37,7 +37,7 @@ def sample_model(
      considered for each step (token), resulting in deterministic completions,
      while 40 means 40 words are considered at each step. 0 (default) is a
      special setting meaning no restrictions. 40 generally is a good value.
-    :prefix=None : blah blah
+    :prefix=None : String blah blah
     """
     enc = encoder.get_encoder(model_name)
     hparams = model.default_hparams()
