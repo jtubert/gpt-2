@@ -16,8 +16,6 @@ def sample_model(
     length=None,
     temperature=1,
     top_k=0,
-    prefix=None,
-    
 ):
     """
     Run the sample_model
@@ -37,7 +35,6 @@ def sample_model(
      considered for each step (token), resulting in deterministic completions,
      while 40 means 40 words are considered at each step. 0 (default) is a
      special setting meaning no restrictions. 40 generally is a good value.
-    :prefix=None : String blah blah
     """
     enc = encoder.get_encoder(model_name)
     hparams = model.default_hparams()
@@ -48,14 +45,6 @@ def sample_model(
         length = hparams.n_ctx
     elif length > hparams.n_ctx:
         raise ValueError("Can't get samples longer than window size: %s" % hparams.n_ctx)
-        
-    if batch_size is None:
-        batch_size = 1
-    assert nsamples % batch_size == 0
-    
-    if prefix:
-        context = tf.placeholder(tf.int32, [batch_size, None])
-
 
     with tf.Session(graph=tf.Graph()) as sess:
         np.random.seed(seed)
@@ -63,8 +52,7 @@ def sample_model(
 
         output = sample.sample_sequence(
             hparams=hparams, length=length,
-            start_token=enc.encoder['<|endoftext|>'] if not prefix else None,
-            context=context if prefix else None,
+            start_token=enc.encoder['<|endoftext|>'],
             batch_size=batch_size,
             temperature=temperature, top_k=top_k
         )[:, 1:]
