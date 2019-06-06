@@ -61,7 +61,7 @@ def sample_model(
 
         output = sample.sample_sequence(
             hparams=hparams, length=length,
-            start_token=enc.encoder['<|endoftext|>'],
+            start_token=enc.encoder['<|endoftext|>'] if not prefix else None,
             batch_size=batch_size,
             temperature=temperature, top_k=top_k
         )[:, 1:]
